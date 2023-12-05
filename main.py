@@ -7,11 +7,6 @@ import sweetviz as sv
 import os
 
 
-def verify_file_html(file_name):
-    _, extension = os.path.splitext(file_name)
-    return extension.lower() == ".html"
-
-
 def sweetviz_report(df):
     sw_report = sv.analyze(df)
     sw_report.show_html()
