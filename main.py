@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from pandas.plotting import scatter_matrix  #Matriz de dispers�o
+from pandas.plotting import scatter_matrix  # Matriz de dispers�o
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -50,6 +50,8 @@ def evaluate_model(model, X_test, y_test):
 
     mse = metrics.mean_squared_error(y_test, predictions)
     print("Erro quadrátrico médio:", mse)
+
+    return score, predictions, mse
 
 
 def grid_search(X_train, y_train):
@@ -100,28 +102,27 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
         })
 
 
-
 def main():
     X_train, X_test, y_train, y_test = organize_dataset()
 
-    best_model = grid_search(X_train, y_train)
+    # best_model = grid_search(X_train, y_train
+    model = MLPRegressor(activation='logistic', max_iter=2000,
+                         hidden_layer_sizes=(8,), alpha=0.1, solver='lbfgs')
+    model.fit(X_train, y_train)
+    score, predictions, mse = evaluate_model(model, X_test, y_test)
 
-    evaluate_model(best_model, X_test, y_test)
+    # train_and_evaluate_model(best_model, X_train, X_test,
+    #                         y_train, y_test, 'BestModelWithScalerR2')
 
-    train_and_evaluate_model(best_model, X_train, X_test,
-                             y_train, y_test, 'BestModelWithScalerR2')
+    ref = np.linspace(min(y_test), max(y_test), 100)
+    plt.scatter(y_test, predictions, s=10)  # pontos de teste
+    plt.plot(ref, ref, c='r')  # Reta x = y para refer�ncia
+
+    # Título dos eixos:
+    plt.xlabel('Valor Previsto')
+    plt.ylabel('Valor Real')
+    plt.show()
 
 
 if __name__ == "__main__":
     main()
-
-
-"""
-#Plotando os valores calculados em fun��o dos previstos para compara��o
-ref = np.linspace(min(y_test),max(y_test),100) #Vetor de referencia para criar reta x = y
-plt.scatter(y_test,predictions, s = 10) #pontos de teste 
-plt.plot(ref,ref, c = 'r') #Reta x = y para refer�ncia
-#Título dos eixos:
-plt.xlabel('Valor Previsto')
-plt.ylabel('Valor Real')
-"""
