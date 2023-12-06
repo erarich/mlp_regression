@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from pandas.plotting import scatter_matrix  # Matriz de dispers�o
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 import sklearn.metrics as metrics
 import sweetviz as sv
 import os
@@ -26,8 +26,12 @@ def organize_dataset():
 
     feature_col_names = ['SquareFeet', 'Bedrooms',
                          'Bathrooms', 'YearBuilt']
-    df_encoded = pd.get_dummies(df, columns=['Neighborhood'], drop_first=True)
+    
+    encoder = OneHotEncoder(drop='first', sparse=False)
+    encoded_neighborhood = encoder.fit_transform(df[['Neighborhood']])
+    df_encoded = pd.concat([df, pd.DataFrame(encoded_neighborhood, columns=encoder.get_feature_names_out(['Neighborhood']))], axis=1)
     target_col_name = 'Price'
+    df_encoded.drop(['Neighborhood'], axis=1, inplace=True)
 
     X = df_encoded[feature_col_names]
     y = df_encoded[target_col_name]
