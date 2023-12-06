@@ -11,9 +11,9 @@ import os
 import csv
 
 
-def sweetviz_report(df):
+def sweetviz_report(df, file_name):
     sw_report = sv.analyze(df)
-    sw_report.show_html()
+    sw_report.show_html(filepath=file_name)
 
 
 def rd_csv():
@@ -83,10 +83,15 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
     score = model.score(X_test, y_test)
     predictions = model.predict(X_test)
     mse = metrics.mean_squared_error(y_test, predictions)
+    mae = metrics.mean_absolute_error(y_test, predictions)
+
+    print(f'R² Score: {score}')
+    print("Erro quadrátrico médio:", mse)
+    print(f'O Erro Absoluto Médio (MAE) é: {mae}')
 
     with open('resultados.csv', 'a', newline='') as csvfile:
         fieldnames = ['Modelo', 'Activation', 'Max_iter',
-                      'Hidden_Layer_Sizes', 'Alpha', 'Solver', 'Score', 'MSE']
+                      'Hidden_Layer_Sizes', 'Alpha', 'Solver', 'Score', 'MSE', 'MAE']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         if os.stat('resultados.csv').st_size == 0:
@@ -100,35 +105,24 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
             'Alpha': model.alpha,
             'Solver': model.solver,
             'Score': score,
-            'MSE': mse
+            'MSE': mse,
+            'MAE': mae
         })
+
+    df = pd.DataFrame({'y_test': y_test, 'predictions': predictions})
+    df.insert(0, 'Index', range(1, len(df['y_test']) + 1))
+    sweetviz_report(df, 'y_testPredictions.html')
+    df.to_csv('output.csv', index=False)
 
 
 def main():
     X_train, X_test, y_train, y_test = organize_dataset()
 
-    # best_model = grid_search(X_train, y_train
     model = MLPRegressor(activation='logistic', max_iter=4000,
                          hidden_layer_sizes=(8,), alpha=0.1, solver='lbfgs')
-    model.fit(X_train, y_train)
-    score, predictions, mse = evaluate_model(model, X_test, y_test)
 
-    # train_and_evaluate_model(best_model, X_train, X_test,
-    #                         y_train, y_test, 'BestModelWithScalerR2')
-
-    df = pd.DataFrame({'y_test': y_test, 'predictions': predictions})
-    df.insert(0, 'Index', range(1, len(df['y_test']) + 1))
-    df.to_csv('output.csv', index=False)
-    x_values = range(len(df['y_test']))
-
-    ref = np.linspace(min(y_test), max(y_test), 100)
-    plt.scatter(y_test, predictions, s=2)  # pontos de teste
-    plt.plot(ref, ref, c='r')  # Reta x = y para refer�ncia
-
-    # Título dos eixos:
-    plt.xlabel('Valor Previsto')
-    plt.ylabel('Valor Real')
-    plt.show()
+    train_and_evaluate_model(model, X_train, X_test,
+                             y_train, y_test, 'NewModel')
 
 
 if __name__ == "__main__":
