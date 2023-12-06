@@ -118,7 +118,7 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
 def main():
     X_train, X_test, y_train, y_test = organize_dataset()
 
-    model = MLPRegressor(activation='logistic', max_iter=4000,
+    model = MLPRegressor(activation='logistic', max_iter=5000,
                          hidden_layer_sizes=(8,), alpha=0.1, solver='lbfgs')
 
     train_and_evaluate_model(model, X_train, X_test,
