@@ -3,3 +3,4 @@ pandas
 sweetviz
 scikit-learn
 setuptools
+matplotlib

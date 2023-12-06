@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from pandas.plotting import scatter_matrix  #Matriz de dispers�o
 from sklearn.neural_network import MLPRegressor
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
@@ -98,6 +100,7 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
         })
 
 
+
 def main():
     X_train, X_test, y_train, y_test = organize_dataset()
 
@@ -111,3 +114,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+"""
+#Plotando os valores calculados em fun��o dos previstos para compara��o
+ref = np.linspace(min(y_test),max(y_test),100) #Vetor de referencia para criar reta x = y
+plt.scatter(y_test,predictions, s = 10) #pontos de teste 
+plt.plot(ref,ref, c = 'r') #Reta x = y para refer�ncia
+#Título dos eixos:
+plt.xlabel('Valor Previsto')
+plt.ylabel('Valor Real')
+"""
