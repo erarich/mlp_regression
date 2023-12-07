@@ -4,3 +4,5 @@ sweetviz
 scikit-learn
 setuptools
 matplotlib
+seaborn
+tensorflow

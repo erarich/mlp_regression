@@ -26,10 +26,11 @@ def organize_dataset():
 
     feature_col_names = ['SquareFeet', 'Bedrooms',
                          'Bathrooms', 'YearBuilt']
-    
+
     encoder = OneHotEncoder(drop='first', sparse=False)
     encoded_neighborhood = encoder.fit_transform(df[['Neighborhood']])
-    df_encoded = pd.concat([df, pd.DataFrame(encoded_neighborhood, columns=encoder.get_feature_names_out(['Neighborhood']))], axis=1)
+    df_encoded = pd.concat([df, pd.DataFrame(
+        encoded_neighborhood, columns=encoder.get_feature_names_out(['Neighborhood']))], axis=1)
     target_col_name = 'Price'
     df_encoded.drop(['Neighborhood'], axis=1, inplace=True)
 
@@ -62,11 +63,24 @@ def evaluate_model(model, X_test, y_test):
 
 def grid_search(X_train, y_train):
     param_grid = {
-        'activation': ['logistic'],
+        # Adicionando outras funções de ativação
+        'activation': ['logistic', 'tanh', 'relu'],
         'max_iter': [1000, 2000, 3000, 4000, 5000],
         'hidden_layer_sizes': [(4,), (8,), (16,)],
         'alpha': [0.0001, 0.001, 0.01, 0.1],
-        'solver': ['lbfgs']
+        # Adicionando outros algoritmos de otimização
+        'solver': ['lbfgs', 'sgd', 'adam'],
+        # Para otimizadores que dependem de taxa de aprendizado
+        'learning_rate': ['constant', 'invscaling', 'adaptive'],
+        # Tamanhos de lote diferentes para otimizadores estocásticos
+        'batch_size': [32, 64, 128],
+        # Apenas para otimizador SGD com momentum
+        'momentum': [0.9, 0.95, 0.99],
+        'beta_1': [0.9, 0.95, 0.99],  # Apenas para otimizador Adam
+        'beta_2': [0.999],  # Apenas para otimizador Adam
+        'early_stopping': [True, False],  # Se usar ou não parada antecipada
+        # Fração de dados usada para validação (se early_stopping=True)
+        'validation_fraction': [0.1, 0.2, 0.3],
     }
 
     model = MLPRegressor()
@@ -115,14 +129,13 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
 
     df = pd.DataFrame({'y_test': y_test, 'predictions': predictions})
     df.insert(0, 'Index', range(1, len(df['y_test']) + 1))
-    sweetviz_report(df, 'y_testPredictions.html')
     df.to_csv('output.csv', index=False)
 
 
 def main():
     X_train, X_test, y_train, y_test = organize_dataset()
 
-    model = MLPRegressor(activation='logistic', max_iter=5000,
+    model = MLPRegressor(activation='logistic', max_iter=6000,
                          hidden_layer_sizes=(8,), alpha=0.1, solver='lbfgs')
 
     train_and_evaluate_model(model, X_train, X_test,
