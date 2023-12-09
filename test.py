@@ -4,8 +4,6 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neural_network import MLPRegressor
-import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error, r2_score
 import sweetviz as sv
 
@@ -45,8 +43,8 @@ y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-print(f'Mean Squared Error: {mse:.2f}')
-print(f'R² Score: {r2:.2f}')
+print(f'Erro Quadrático Médio: {mse:.2f}')
+print(f'R²: {r2:.2f}')
 
 daf = pd.DataFrame({'y_test': y_test, 'predictions': y_pred})
 daf.insert(0, 'Index', range(1, len(daf['y_test']) + 1))
