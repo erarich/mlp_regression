@@ -104,8 +104,8 @@ def train_and_evaluate_model(model, X_train, X_test, y_train, y_test, model_name
     mae = metrics.mean_absolute_error(y_test, predictions)
 
     print(f'R² Score: {score}')
-    print("Erro quadrátrico médio:", mse)
-    print(f'O Erro Absoluto Médio (MAE) é: {mae}')
+    print(f"Erro Quadrático Médio (MSE): {mse}")
+    print(f'Erro Absoluto Médio (MAE): {mae}')
 
     with open('resultados.csv', 'a', newline='') as csvfile:
         fieldnames = ['Modelo', 'Activation', 'Max_iter',
